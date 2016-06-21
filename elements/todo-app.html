@@ -176,7 +176,7 @@
 	#div1 {
 		text-align: justify;
 		width: 640px;
-		border: 10px;
+		padding: 10px;
 	}
 	</style>
   
@@ -269,13 +269,15 @@
 </dom-module>
 
 <script>
-  // element registration
-  Polymer({
-    is: "todo-app",
 
-    // add properties and methods on the element's prototype
-    properties: {
-    	// declare properties for the element's public API
+	// element registration
+Polymer({
+
+	is: "todo-app",
+
+	// add properties and methods on the element's prototype
+	properties: {
+		// declare properties for the element's public API
 		todo: {
 			type: Array,
 			value: []
@@ -286,24 +288,23 @@
 			value: []
 		},
 
-    },
+	},
 
-    postTask: function(e) {
-    	txt = null;
-		var selec = this.$.Sel.value;
-	    var tsk = this.$.tTask.value;
-		var mythis = this;
+	postTask: function(e) {
+		txt = null;
+		//var selec = this.$.Sel.value;
+		var tsk = this.$.tTask.value;
 
 
 		//if (selec=="Select-the-Object"){
-			//alert("Select an Option!");
-			//return;
+		//alert("Select an Option!");
+		//return;
 		//}
 
 
-	    if (tsk==""){
-		    alert("Task is Empty!");
-		    return;
+		if (tsk==""){
+			alert("Task is Empty!");
+			return;
 		}
 
 
@@ -312,32 +313,18 @@
 		//tsk = "Folders/"+selec+"/"+tsk+".txt";
 		tsk = tsk+".txt";
 
-		document.getElementById("div1").style.display = "none";
-        $("#div1").load(tsk, function(responseTxt, statusTxt, xhr){
-            if(statusTxt == "success"){
-                //alert("External content loaded successfully!");
-              	txt = document.getElementById("div1").innerHTML;
-				console.log(txt);
-				mythis.$.pub.message = {type:"todo", task:txt};
-				mythis.$.pub.publish();
-				mythis.$.tTask.value = "";
-		    }
-
-            if(statusTxt == "error")
-                alert("Error: " + xhr.status + ": " + xhr.statusText);
-
-            console.log(txt);
-        });
+		$("#div1").load(tsk);
 
 
-    },
-    subscribeCallback: function(e){
-	    while(this.messages.length > 0){
+	},
+	subscribeCallback: function(e){
+		while(this.messages.length > 0){
 			var item = this.messages.pop();
 			this.unshift('todo', {task:item.task});
-		    }
-	    },
-  });
+		}
+	},
+
+});
 
 
 
