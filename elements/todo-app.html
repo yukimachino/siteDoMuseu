@@ -318,7 +318,7 @@ Polymer({
 			PREFIX dbp2: <http://dbpedia.org/ontology/>\
 			SELECT ?abstract\
 			WHERE {\
-			     dbp:\""+query+"\" dbp2:abstract ?abstract . \
+			     dbp:"+query+" dbp2:abstract ?abstract . \
 			     FILTER langMatches(lang(?abstract), 'en')\
 			}"
 
