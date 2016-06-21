@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<link href="../bower_components/polymer/polymer.html" rel="import">
+	<link href="../elements/todo-element.html" rel="import">
+	<link href="../bower_components/paper-drawer-panel/paper-drawer-panel.html" rel="import">
+	<link href="../bower_components/paper-header-panel/paper-header-panel.html" rel="import">
+	<link href="../bower_components/paper-toolbar/paper-toolbar.html" rel="import">
+	<link href="../bower_components/paper-icon-button/paper-icon-button.html" rel="import">
+	<link href="../bower_components/paper-material/paper-material.html" rel="import">
+	<link href="../bower_components/paper-menu/paper-menu.html" rel="import">
+	<link href="../bower_components/paper-item/paper-item.html" rel="import">
+	<link href="../bower_components/paper-input/paper-input.html" rel="import">
+	<link href="../bower_components/iron-icons/iron-icons.html" rel="import">
+	<link href="../bower_components/pubnub-element/pubnub-element.html" rel="import">
+
+
+</head>
+
+<dom-module id="todo-app">
+	<style>
+
+		nav {
+			background-color: #7a1124;
+			position: fixed;
+			bottom: 0;
+			width: 100%;
+
+		}
+
+		nav li {
+			margin: 0;
+			padding: 0 10px;
+			display: inline;
+		}
+
+		nav ul {
+			display: inline;
+		}
+
+
+		nav a {
+			height: 60px;
+			line-height: 60px;
+			color: #fcfcff;
+			text-decoration: none;
+		}
+
+	.list paper-item {
+		min-height: 80px;
+		border-bottom: 1px solid #dedede;
+		background-color: #fafafa;
+	}
+
+	#todoEntry {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		max-width: none;
+		border-bottom: 1px solid #ccc;
+		padding-top: 10px;
+
+	}
+
+
+	#imageSize {
+		width:40%;
+		height: 16%;
+		margin-top: 25px;
+		padding-left: 4%;
+	}
+
+	#searchTitle {
+		text-align: center;
+		font-family: Cousine;
+		color: #fcfcff;
+		background-color: #116284;
+		padding-top: 7px;
+		padding-bottom: 7px;
+	}
+
+	#searchItem {
+		left: 90%;
+	}
+
+
+	#searchTitle2 {
+		text-align: center;
+		font-family: Cousine;
+		color: #fcfcff;
+		background-color: #747173;
+		padding-top: 7px;
+		padding-bottom: 7px;
+		width: 100%;
+	}
+
+
+	paper-input {
+		margin: 0 4vw;
+		padding: 0;
+	}
+	
+	paper-material {
+		background-color: #fff;
+		max-width: 700px;
+		width: 95%;
+		margin: 25px auto;
+
+	}
+	
+
+	#todos {
+		height: 200%;
+		width: 100%;
+		background: #fcfcff;
+	}
+
+
+	.main-panel {
+		background-color: #fcfcff;
+	}
+
+	.side-panel {
+		background: #CECBCD ;
+	}
+	
+	.task-empty paper-item {
+		text-align: center;
+		padding: 25px;
+		color: #6f6f6f;
+	}
+
+	paper-toolbar {
+		background:#7a1124;
+	}
+	
+	#made-with {
+		width:100%;
+		margin:0;
+		position: fixed;
+		bottom: 0;
+		text-align: center;
+		background: #a7a4a6;
+	}
+
+	#otherSites {
+		width:90%;
+		padding-bottom: 10%;
+		margin-left: 5%;
+	}
+
+	#Sel {
+		width:80%;
+		position: relative;
+		margin-left: 10%;
+		margin-bottom: 10%;
+		padding: 1%;
+	}
+
+	#made-with img {
+		width: 70%;
+		height: 8%;
+		padding: 10px;
+		background: white;
+	}
+
+
+
+	.leftDiv {
+		float: left;
+		width: 51%;
+		padding-top: 1%;
+	}
+
+	#div1 {
+		text-align: justify;
+		width: 640px;
+		border: 10px;
+	}
+	</style>
+  
+	<template>
+		<!-- Menu Principal -->
+		<paper-drawer-panel>
+			<paper-header-panel class="side-panel" drawer>
+				<paper-toolbar>
+					<paper-item>MUSEU DA COMPUTAÇÃO</paper-item>
+				</paper-toolbar>
+
+				<!-- Barra Lateral -->
+				<div role="listbox">
+					<paper-material  elevation="2"  id="searchTitle2">Sites Relacionados</paper-material>
+
+						<a class="paper-item-link" href="http://www.computerhistory.org/" tabindex="-1"><img  src="../img/DM_schwarz2.png" id="otherSites" /></a>
+						<a class="paper-item-link" href="http://www.deutsches-museum.de/en"  tabindex="-1"><img src="../img/computer-history.png"id="otherSites" /></a>
+
+				</div>
+
+				<paper-material id="made-with" elevation="2">
+					<a href="http://mc.icmc.usp.br/"><img src="../img/logo-museu.gif"/></a>
+				</paper-material>
+			</paper-header-panel>
+
+
+			<!--Painel Princial-->
+			<paper-header-panel main class="main-panel">
+				<paper-toolbar>
+					<!--Icone sanduiche-->
+					<paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+					<paper-item> FAÇA SUAS BUSCAS </paper-item>
+				</paper-toolbar>
+
+				<div id="todos">
+					<paper-material id="todoEntry" elevation="2">
+						<div class="leftDiv">
+							<paper-material  elevation="2"  id="searchTitle">BREVE INFORMAÇÃO SOBRE</paper-material>
+
+							<!-- Busca -->
+							<paper-material  elevation="2">
+								<paper-input id="tTask" char-counter label="Faça Sua Busca" maxlength="36" error="maximum characters exceeded"></paper-input>
+								<paper-icon-button id="searchItem" noink icon="search"  title="find" on-tap="postTask" ></paper-icon-button>
+
+                                <!--
+								<select name="Selection" id="Sel">
+									<option value="Select-the-Object">Selecione o Tipo do Objeto Buscado
+									<option value="Celulares">Celulares
+									<option value="Computadores">Computadores
+									<option value="Livros">Livros
+								</select>
+
+								-->
+							</paper-material>
+						</div>
+
+						<img id="imageSize" src="../img/museu.png"/>
+
+						<template is="dom-if" if="{{!todo.length}}">
+                        <paper-material class="task-empty">
+                            <!--<paper-item elevation="2"></paper-item>-->
+                        </paper-material>
+                    </template>
+                        <template id="tasks" is="dom-repeat" items="{{todo}}">
+                            <todo-element task="{{item.task}}"></todo-element>
+                        </template>
+
+
+						<!-- Bloco de Impressão de Resultado da Busca -->
+						<paper-material id="div1" elevation="2"></paper-material>
+
+						<!-- Rodapé -->
+						<nav>
+							<ul>
+								<li><a href="#"><b>Rodapé</b></a></li>
+								<li><a href="#">Coisas do Site</a></li>
+							</ul>
+						</nav>
+					</paper-material>
+				</div>
+			</paper-header-panel>
+		</paper-drawer-panel>
+		<core-pubnub
+	        publish_key="pub-c-7fad26fe-6c38-4940-b9c3-fbd19a9633af"
+	        subscribe_key="sub-c-30c17e1a-0007-11e5-a8ef-0619f8945a4f">
+	        <core-pubnub-publish id="pub" channel="todo" message="Hello"> </core-pubnub-publish>
+	        <core-pubnub-subscribe id="sub" channel="todo" messages="{{messages}}" presence="{{present}}" on-callback="subscribeCallback"></core-pubnub-subscribe>
+        </core-pubnub>
+	</template>
+</dom-module>
+
+<script>
+  // element registration
+  Polymer({
+    is: "todo-app",
+
+    // add properties and methods on the element's prototype
+    properties: {
+    	// declare properties for the element's public API
+		todo: {
+			type: Array,
+			value: []
+		},
+
+		messages: {
+			type: Array,
+			value: []
+		},
+
+    },
+
+    postTask: function(e) {
+    	txt = null;
+		var selec = this.$.Sel.value;
+	    var tsk = this.$.tTask.value;
+		var mythis = this;
+
+
+		//if (selec=="Select-the-Object"){
+			//alert("Select an Option!");
+			//return;
+		//}
+
+
+	    if (tsk==""){
+		    alert("Task is Empty!");
+		    return;
+		}
+
+
+
+		console.log("Console 1");
+		//tsk = "Folders/"+selec+"/"+tsk+".txt";
+		tsk = tsk+".txt";
+
+		document.getElementById("div1").style.display = "none";
+        $("#div1").load(tsk, function(responseTxt, statusTxt, xhr){
+            if(statusTxt == "success"){
+                //alert("External content loaded successfully!");
+              	txt = document.getElementById("div1").innerHTML;
+				console.log(txt);
+				mythis.$.pub.message = {type:"todo", task:txt};
+				mythis.$.pub.publish();
+				mythis.$.tTask.value = "";
+		    }
+
+            if(statusTxt == "error")
+                alert("Error: " + xhr.status + ": " + xhr.statusText);
+
+            console.log(txt);
+        });
+
+
+    },
+    subscribeCallback: function(e){
+	    while(this.messages.length > 0){
+			var item = this.messages.pop();
+			this.unshift('todo', {task:item.task});
+		    }
+	    },
+  });
+
+
+
+</script>
