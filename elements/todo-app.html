@@ -293,7 +293,7 @@ Polymer({
 	postTask: function(e) {
 		txt = null;
 		//var selec = this.$.Sel.value;
-		var tsk = this.$.tTask.value;
+		var query = this.$.tTask.value;
 
 
 		//if (selec=="Select-the-Object"){
@@ -302,18 +302,43 @@ Polymer({
 		//}
 
 
-		if (tsk==""){
+		if (query==""){
 			alert("Task is Empty!");
 			return;
 		}
 
-
-
 		console.log("Console 1");
-		//tsk = "Folders/"+selec+"/"+tsk+".txt";
-		tsk = tsk+".txt";
+		//query = "Folders/"+selec+"/"+query+".txt";
+		//query = query+".txt";
 
-		$("#div1").load(tsk);
+		// var sparql_request = "SELECT ?o WHERE { <http://dbpedia.org/resource/"+query+"> ?o }"
+		var sparql_request = "SELECT ?o WHERE { <http://dbpedia.org/resource/IBM> ?p ?o }"
+		var sparql_request = "\
+			PREFIX dbp: <http://dbpedia.org/resource/>\
+			PREFIX dbp2: <http://dbpedia.org/ontology/>\
+			SELECT ?abstract\
+			WHERE {\
+			     dbp:"+query+" dbp2:abstract ?abstract . \
+			     FILTER langMatches(lang(?abstract), 'en')\
+			}"
+
+		sparql_request = encodeURI(sparql_request)
+		var request_url = "http://dbpedia.org/sparql?format=json&default-graph-uri=http%3A%2F%2Fdbpedia.org&query="
+
+		console.log(request_url+sparql_request)
+		var request = $.ajax({
+		  url: request_url+sparql_request,
+		  method: "GET",
+		  dataType: "json"
+		});
+
+		request.done(function(data) {
+		  $("#div1").html(data.results.bindings[0].abstract.value);
+		});
+		 
+		request.fail(function(jqXHR, textStatus) {
+		  alert("Request failed: " + textStatus);
+		});
 
 
 	},
